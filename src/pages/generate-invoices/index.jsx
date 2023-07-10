@@ -51,7 +51,11 @@ const OpenTicket = () => {
   const [productName, setProductName] = useState(null)
   const [unitPrice, setUnitPrice] = useState(null)
   const [quantity, setQuantity] = useState(null)
-
+  const [userIdDetails, setUserIdDetails] = useState(null)
+  const [userIdDetailsError, setUserIdDetailsError] = useState(false)
+  const [checkInvoice, setCheckInvoice] = useState(false)
+  const [invoiceResponse, setInvoiceResponse] = useState(null)
+  const [submitButton, setSubmitButton] = useState(false)
   const deleteItem = key => {
     let arr = products.filter((r, k) => k != key)
     setProducts(arr)
@@ -137,6 +141,59 @@ const OpenTicket = () => {
     }
   }
 
+  const checkUserId = (e) => {
+    let userid = e.target.value
+    setUserId(userid)
+    if(userid){
+      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/franchisepanel/checkuser/${userid}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.accessToken}`
+        }
+      })
+        .then(response => {
+         setUserIdDetails(response.data.name)
+         setUserIdDetailsError(false)
+         setSubmitButton(false)
+        })
+        .catch(error => {
+          setUserIdDetails('')
+          setUserIdDetailsError(true)
+          setSubmitButton(false)
+          if (error.response && error.response.status == 401) {
+            auth.logout();
+          }
+        })
+    }
+  }
+
+  const checkInvoiceApi = (e) => {
+    let value = e.target.value
+    setInvoiceNo(value)
+    if(value.length > 4){
+      axios.get(`${process.env.NEXT_PUBLIC_API_URL}/franchisepanel/checkinvoice/${value}`, {
+        headers: {
+          "Authorization": `Bearer ${localStorage.accessToken}`
+        }
+      })
+        .then(response => {
+         setInvoiceResponse(response.data.message)
+         setCheckInvoice(true)
+        })
+        .catch(error => {
+          
+         setInvoiceResponse(error.response.data.message)
+         setCheckInvoice(false)
+         setSubmitButton(false)
+          if (error.response && error.response.status == 401) {
+            auth.logout();
+          }
+        })
+    }else{
+      setInvoiceResponse('Invoice must contain atleast 5 digits!')
+      setCheckInvoice(false)
+    }
+  }
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
@@ -160,22 +217,31 @@ const OpenTicket = () => {
       <Grid item xs={6}>
         <TextField
           xs={6}
-          onChange={e => setUserId(e.target.value)}
+          onChange={checkUserId}
           value={userId}
           fullWidth
           label='User ID:'
           placeholder='User ID:'
         />
+        {userIdDetails&&<Typography variant='p' sx={{ color: 'success.main' }}>
+          {userIdDetails} is your sponsor !
+        </Typography>}
+        {userIdDetailsError&&<Typography variant='p' sx={{ color: 'red' }}>
+          Invalid User Id
+        </Typography>}
       </Grid>
       <Grid item xs={6}>
         <TextField
           xs={6}
-          onChange={e => setInvoiceNo(e.target.value)}
+          onChange={checkInvoiceApi}
           value={invoiceNo}
           fullWidth
           label='Invoice No:'
           placeholder='Invoice No:'
         />
+        {invoiceResponse&&<Typography variant='p' sx={{ color: checkInvoice?'success.main':'red' }}>
+          {invoiceResponse}
+        </Typography>}
       </Grid>
 
       <Grid item xs={12}>

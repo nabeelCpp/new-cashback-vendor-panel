@@ -31,7 +31,7 @@ const routes = [
   },
   {
     icon: 'uis:signout',
-    title: 'Sign Out',
+    title: 'Logout',
     path: '/logout'
   }
 ]
