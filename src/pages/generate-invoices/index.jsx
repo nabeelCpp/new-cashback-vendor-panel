@@ -169,7 +169,7 @@ const OpenTicket = () => {
   const checkInvoiceApi = (e) => {
     let value = e.target.value
     setInvoiceNo(value)
-    if(value.length > 4){
+    if(value.length > 0){
       axios.get(`${process.env.NEXT_PUBLIC_API_URL}/franchisepanel/checkinvoice/${value}`, {
         headers: {
           "Authorization": `Bearer ${localStorage.accessToken}`
@@ -189,7 +189,7 @@ const OpenTicket = () => {
           }
         })
     }else{
-      setInvoiceResponse('Invoice must contain atleast 5 digits!')
+      setInvoiceResponse('Invoice number is required')
       setCheckInvoice(false)
     }
   }
@@ -224,7 +224,7 @@ const OpenTicket = () => {
           placeholder='User ID:'
         />
         {userIdDetails&&<Typography variant='p' sx={{ color: 'success.main' }}>
-          {userIdDetails} is your sponsor !
+          {userIdDetails}
         </Typography>}
         {userIdDetailsError&&<Typography variant='p' sx={{ color: 'red' }}>
           Invalid User Id
@@ -350,7 +350,7 @@ const OpenTicket = () => {
       </Grid>
 
       <Grid item md={6} xs={12}>
-        <Button variant='contained' sx={{ mr: 2 }} onClick={submitHandler}>
+        <Button variant='contained' sx={{ mr: 2 }} onClick={submitHandler} disabled={!userIdDetailsError && checkInvoice ? false : true}>
           Submit
         </Button>
       </Grid>
