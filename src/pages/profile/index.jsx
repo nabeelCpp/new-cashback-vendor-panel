@@ -72,6 +72,7 @@ const Profile = () => {
   const [branchName, setBranchName] = useState('')
   const [swiftCode, setSwiftCode] = useState('')
   const [gallery, setGallery] = useState([])
+  const [gal, setGal] = useState([])
   const [cmpLogo, setCmpLogo] = useState('')
 
   const [uploadLogo, setUploadLogo] = useState(null)
@@ -141,6 +142,7 @@ const Profile = () => {
           setBranchName(user.branch_nm || '')
           setSwiftCode(user.swift_code || '')
           // setGallery(user.file || [])
+          setGal(user.file || [])
           setCmpLogo(user.cmp_logo || '')
           setProfile(user)
         })
@@ -258,6 +260,7 @@ const Profile = () => {
 
         // Update the gallery state with the new files
         setGallery(data.files)
+        setGal(data.files)
 
         // Reset the uploadGallery state to an empty array
         setUploadGallery([])
@@ -304,6 +307,7 @@ const Profile = () => {
 
         // Update the gallery state with the new files
         setGallery(response.data.files)
+        setGal(response.data.files)
       })
       .catch(error => {
         // Close the loading modal
@@ -568,8 +572,8 @@ const Profile = () => {
 
         <Grid item md={9} xs={12}>
           <ImageList sx={{ width: 500, height: 200 }} cols={3} rowHeight={164}>
-            {gallery
-              ? gallery.map(item => (
+            {gal
+              ? gal.map(item => (
                   <ImageListItem key={item}>
                     <img
                       src={`${item}?w=164&h=164&fit=crop&auto=format`}
